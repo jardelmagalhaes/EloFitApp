@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>EloFitApp</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+</head>
+
+<body>
+
+    <div id="tela-login" class="login-wrapper">
+
+        <div class="login-card">
+
+            <h1>EloFitApp</h1>
+
+            <p>O controle da sua disciplina começa aqui.</p>
+
+            <button id="btn-entrar" class="btn-acao">Acessar com Google</button>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="app-principal" style="display: none;">
+
+        <header>
+
+            <h1>CheckVital</h1>
+
+            <nav>
+
+                <button id="btn-agua">💧 Água</button>
+
+                <button id="btn-treino">🏋️ Treino</button>
+
+                <button id="btn-sair" style="color: red;">Sair</button>
+
+            </nav>
+
+        </header>
+
+        <main id="conteudo-principal"></main>
+
+    </div>
+
+<script type="module" src="/js/app.js"></script>    
+</body>
+
+</html>
