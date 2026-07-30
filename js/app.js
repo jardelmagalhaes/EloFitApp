@@ -23,7 +23,36 @@ const provider = new GoogleAuthProvider();
 let usuarioAtual = null;
 
 /* ==========================================================================
-   MÓDULO 2: TEMPLATES E CONTROLE DE TELAS
+   MÓDULO 2: FUNÇÕES DE BANCO DE DADOS (FIRESTORE)
+   ========================================================================== */
+async function salvarNoFirestore(dados) {
+    if (!usuarioAtual) return;
+    try {
+        const refDoc = doc(db, "usuarios", usuarioAtual);
+        // merge: true garante que não sobrescreve outros campos
+        await setDoc(refDoc, dados, { merge: true });
+    } catch (erro) {
+        console.error("Erro ao salvar no Firestore:", erro);
+    }
+}
+
+async function carregarDoFirestore() {
+    if (!usuarioAtual) return null;
+    try {
+        const refDoc = doc(db, "usuarios", usuarioAtual);
+        const snapshot = await getDoc(refDoc);
+        if (snapshot.exists()) {
+            return snapshot.data();
+        }
+        return null;
+    } catch (erro) {
+        console.error("Erro ao carregar do Firestore:", erro);
+        return null;
+    }
+}
+
+/* ==========================================================================
+   MÓDULO 3: TEMPLATES E CONTROLE DE TELAS
    ========================================================================== */
 const conteudoPrincipal = document.getElementById('conteudo-principal');
 
@@ -43,21 +72,36 @@ const templateTreino = `
     </div>
 `;
 
-function carregarTela(tela) {
+async function carregarTela(tela) {
     if (tela === 'agua') {
         conteudoPrincipal.innerHTML = templateAgua;
         
-        // Evento provisório do botão de água
-        document.getElementById('btn-add-agua').addEventListener('click', () => {
-            console.log("Copo adicionado!");
+        // Carrega o valor salvo no Firestore ao abrir a tela
+        const dados = await carregarDoFirestore();
+        let totalAgua = dados && dados.agua ? dados.agua : 0;
+        
+        const displayTotal = document.getElementById('total-bebido');
+        if (displayTotal) {
+            displayTotal.innerText = `${totalAgua} ml`;
+        }
+
+        // Evento de clique para adicionar água e salvar na nuvem
+        document.getElementById('btn-add-agua').addEventListener('click', async () => {
+            totalAgua += 250;
+            if (displayTotal) {
+                displayTotal.innerText = `${totalAgua} ml`;
+            }
+            await salvarNoFirestore({ agua: totalAgua });
+            console.log("Água salva na nuvem:", totalAgua);
         });
+
     } else {
         conteudoPrincipal.innerHTML = templateTreino;
     }
 }
 
 /* ==========================================================================
-   MÓDULO 3: AUTENTICAÇÃO E EVENTOS GLOBAIS
+   MÓDULO 4: AUTENTICAÇÃO E EVENTOS GLOBAIS
    ========================================================================== */
 onAuthStateChanged(auth, (user) => {
     const telaLogin = document.getElementById('tela-login');
@@ -81,4 +125,3 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-agua').addEventListener('click', () => carregarTela('agua'));
     document.getElementById('btn-treino').addEventListener('click', () => carregarTela('treino'));
 });
-
