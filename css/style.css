@@ -1,374 +1,109 @@
-/* Variáveis de Cores e Estilos Básicos */
-:root {
-    --cor-fundo: #f4f4f9;
-    --cor-texto: #333;
-    --cor-primaria: #007bff; /* Azul para água */
-    --cor-secundaria: #ff4757; /* Vermelho para treino */
-    --cor-card: #ffffff;
-    --borda-raio: 8px;
-}
-
+/* Estilos Base / Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: var(--cor-fundo);
-    color: var(--cor-texto);
-    padding-bottom: 20px;
-}
-
-header {
-    background-color: var(--cor-card);
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-header h1 {
-    margin-bottom: 15px;
-    font-size: 1.8rem;
-}
-
-nav button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    border: none;
-    border-radius: var(--borda-raio);
-    background-color: #e0e0e0;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-nav button:hover, nav button.ativo {
-    background-color: var(--cor-texto);
-    color: white;
-}
-
-main {
-    padding: 20px;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Estilos dos Cards de Conteúdo */
-.card {
-    background: var(--cor-card);
-    padding: 20px;
-    border-radius: var(--borda-raio);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-}
-
-.input-grupo {
-    margin-bottom: 15px;
+    background-color: #f4f6f9;
+    color: #333;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-.input-grupo label {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.input-grupo input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: var(--borda-raio);
-    font-size: 1rem;
-}
-
-.btn-acao {
-    flex: 1; /* Faz o botão crescer para preencher o espaço */
-    padding: 15px;
-    border: none;
-    border-radius: var(--borda-raio);
-    background-color: var(--cor-primaria);
-    color: white;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* Adicione isso logo após a classe .btn-acao */
-.botoes-container {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-desfazer {
-    background-color: #7f8c8d; /* Cor neutra para não chamar tanta atenção quanto o botão principal */
-    flex: 0.4; /* Ocupa um pouco menos de espaço que o botão de beber */
-}
-
-/* Checklist Visual da Água */
-.checklist-agua {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.copo {
-    width: 40px;
-    height: 60px;
-    background-color: #e0e0e0;
-    border-radius: 4px 4px 10px 10px;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid #ccc;
-}
-
-.copo.cheio {
-    border-color: var(--cor-primaria);
-}
-
-.copo.cheio::after {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background-color: var(--cor-primaria);
-}
-
-/* --- Ofensiva (Streak) --- */
-.streak-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: #fff3e0;
-    border: 1px solid #ffe0b2;
-    padding: 10px;
-    border-radius: var(--borda-raio);
-    margin-bottom: 15px;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #e65100;
-}
-
-#icone-fogo {
-    font-size: 1.5rem;
-    transition: all 0.3s;
-}
-
-/* --- Calendário Semanal --- */
-.calendario-semanal {
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--cor-card);
-    padding: 15px;
-    border-radius: var(--borda-raio);
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
-}
-
-.dia-semana {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 0.85rem;
-    color: #777;
-}
-
-.dia-semana .icone-dia {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-/* Quando o dia tem a meta batida (fogo) */
-.dia-semana.sucesso .icone-dia {
-    background-color: #fff3e0;
-}
-
-/* Destaque visual para o dia de HOJE */
-.dia-semana.hoje {
-    font-weight: bold;
-    color: var(--cor-texto);
-}
-.dia-semana.hoje .icone-dia {
-    border: 2px solid var(--cor-primaria);
-}
-
-/* ==========================================
-   ESTILOS VISUAIS DO TREINO (CHECKLIST)
-   ========================================== */
-.etapa-oculta {
-    display: none !important;
-}
-
-.exercicio-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: var(--borda-raio);
-    margin-top: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.exercicio-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.exercicio-titulo {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--cor-texto);
-    text-transform: capitalize;
-}
-
-/* Selos de Progressão de Carga */
-.badge-progresso {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-top: 5px;
-}
-
-.badge-sim { 
-    background-color: #cce5ff; 
-    color: #004085; 
-}
-
-.badge-nao { 
-    background-color: #e2e3e5; 
-    color: #383d41; 
-}
-
-.btn-remover-ex {
-    background: none;
-    border: none;
-    color: #ff4757;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
-
-/* Linhas de Série (O Checklist) */
-.series-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.serie-linha {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fafafa;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.serie-linha:hover {
-    background-color: #f0f0f0;
-}
-
-/* Quando a série for marcada como concluída */
-.serie-linha.concluida {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-}
-
-.serie-info {
-    font-weight: bold;
-    font-size: 1rem;
-}
-
-.serie-reps {
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.serie-linha.concluida .serie-reps {
-    color: #155724; /* Fica verde junto com a caixa */
-}
-
-.serie-status {
-    font-size: 1.2rem;
-}
-
-/* --- Status de Exercício Concluído --- */
-.exercicio-item.concluido {
-    border: 2px solid #28a745;
-    background-color: #f7fcf8;
-}
-
-.badge-concluido-ex {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
-/* ==========================================
-   TELA DE LOGIN
-   ========================================== */
+/* Tela de Login */
 .login-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: var(--cor-fundo);
-    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .login-card {
-    background: var(--cor-card);
-    padding: 40px 30px;
-    border-radius: var(--borda-raio);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    width: 100%;
-    max-width: 400px;
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     text-align: center;
-    border-top: 5px solid var(--cor-texto);
+    max-width: 350px;
+    width: 100%;
 }
 
 .login-card h1 {
-    color: var(--cor-texto);
-    font-size: 2.2rem;
-    margin-bottom: 5px;
-    letter-spacing: -1px;
+    margin-bottom: 0.5rem;
+    color: #333;
 }
 
 .login-card p {
-    color: #7f8c8d;
-    margin-bottom: 30px;
-    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
 }
 
-header nav {
+/* Botões Padrão */
+.btn-acao {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.btn-acao:hover {
+    background-color: #3367d6;
+}
+
+/* Header do App Principal */
+header {
+    background: white;
+    padding: 1rem;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+header h1 {
+    font-size: 1.2rem;
+    color: #4285F4;
+}
+
+nav button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 10px;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+nav button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Cards de Conteúdo */
+main {
+    padding: 20px;
+    flex: 1;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
 }
