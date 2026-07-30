@@ -3,37 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheckVital</title>
-    <!-- Link para o futuro arquivo CSS -->
+    <title>EloFit</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- TELA DE LOGIN (Visível inicialmente) -->
+    <!-- TELA DE LOGIN -->
     <div id="tela-login" class="login-wrapper">
         <div class="login-card">
-            <h1>CheckVital</h1>
+            <h1>EloFit</h1>
             <p>O controle da sua disciplina começa aqui.</p>
             <button id="btn-entrar" class="btn-acao">Acessar com Google</button>
         </div>
     </div>
 
-    <!-- APP PRINCIPAL (Oculto por padrão até o usuário logar) -->
+    <!-- APP PRINCIPAL -->
     <div id="app-principal" style="display: none;">
         <header>
-            <h1>CheckVital</h1>
+            <h1>EloFit</h1>
             <nav>
                 <button id="btn-agua">💧 Água</button>
                 <button id="btn-treino">🏋️ Treino</button>
                 <button id="btn-sair" style="color: red;">Sair</button>
             </nav>
         </header>
-        
-        <!-- O conteúdo dinâmico de cada tela será injetado aqui via JS -->
         <main id="conteudo-principal"></main>
     </div>
 
-    <!-- SCRIPT PRINCIPAL (Módulo JS) -->
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
