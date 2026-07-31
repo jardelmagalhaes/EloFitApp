@@ -559,6 +559,11 @@ function carregarTela(tela) {
     }
 }
 
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+    prompt: 'select_account' // Força o Google a exibir a escolha de contas
+});
+
 /* ==========================================================================
    MÓDULO 3: AUTENTICAÇÃO E EVENTOS GLOBAIS
    ========================================================================== */
@@ -596,7 +601,23 @@ onAuthStateChanged(auth, (user) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-entrar').addEventListener('click', () => signInWithPopup(auth, provider));
-    document.getElementById('btn-sair').addEventListener('click', () => signOut(auth));
+    
+    document.getElementById('btn-sair').addEventListener('click', () => {
+        signOut(auth).then(() => {
+            // Limpa dados locais e força retorno imediato à tela de login
+            localStorage.clear();
+            usuarioAtual = null;
+        });
+    });
+
+    // Clicar na logo leva de volta para a tela principal de água
+    const logoHome = document.getElementById('logo-home');
+    if (logoHome) {
+        logoHome.addEventListener('click', () => {
+            carregarTela('agua');
+        });
+    }
+
     document.getElementById('btn-agua').addEventListener('click', () => carregarTela('agua'));
     document.getElementById('btn-treino').addEventListener('click', () => carregarTela('treino'));
 });
