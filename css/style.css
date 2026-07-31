@@ -82,7 +82,8 @@ header img {
 #logo-home {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 0;
     cursor: pointer;
     padding: 6px 10px;
     border-radius: 10px;
