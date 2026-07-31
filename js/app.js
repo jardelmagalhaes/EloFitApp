@@ -2,7 +2,7 @@
    MÓDULO 1: IMPORTAÇÕES E CONFIGURAÇÃO DO FIREBASE
    ========================================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -19,6 +19,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+
+async function autenticarGoogle() {
+    if (location.protocol === 'file:') {
+        alert('Para usar o login com o Google, abra o app em um servidor local, por exemplo: http://localhost:8000');
+        return;
+    }
+
+    try {
+        await signInWithPopup(auth, provider);
+    } catch (error) {
+        const popupBloqueado = [
+            'auth/popup-blocked',
+            'auth/cancelled-popup-request',
+            'auth/popup-closed-by-user'
+        ].includes(error?.code) || (error?.message || '').toLowerCase().includes('popup');
+
+        if (popupBloqueado) {
+            console.warn('Popup bloqueado; usando redirecionamento do Google.');
+            try {
+                await signInWithRedirect(auth, provider);
+                return;
+            } catch (redirectError) {
+                console.error('Erro no redirect do Google:', redirectError);
+            }
+        }
+
+        console.error('Erro ao autenticar com Google:', error);
+        alert('Não foi possível entrar com o Google. Verifique se o app está sendo aberto em http://localhost ou em um domínio HTTPS válido.');
+    }
+}
 
 let usuarioAtual = null;
 
@@ -611,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.clear();
     };
 
-    document.getElementById('btn-entrar').addEventListener('click', () => signInWithPopup(auth, provider));
+    document.getElementById('btn-entrar').addEventListener('click', autenticarGoogle);
     
     document.getElementById('btn-sair').addEventListener('click', async () => {
         mostrarTelaLogin();
