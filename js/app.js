@@ -1,3 +1,4 @@
+
 /* ==========================================================================
    MÓDULO 1: IMPORTAÇÕES, CONFIGURAÇÃO E ESTADO LOCAL
    ========================================================================== */
@@ -163,7 +164,6 @@ const templateAgua = `
         <div id="container-dias-semana" style="display: flex; justify-content: space-between; gap: 5px; margin-bottom: 15px; background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px solid #eee;"></div>
 
         <h2>Controle de Hidratação</h2>
-        <p style="color: #666; font-size: 0.85rem; margin-bottom: 15px;">"Não diga ao problema que você tem um grande Deus, diga ao problema que você tem um grande Deus."</p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; text-align: left;">
             <div>
