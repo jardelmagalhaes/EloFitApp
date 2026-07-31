@@ -600,21 +600,39 @@ onAuthStateChanged(auth, (user) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    const mostrarTelaLogin = () => {
+        const telaLogin = document.getElementById('tela-login');
+        const appPrincipal = document.getElementById('app-principal');
+
+        if (telaLogin) telaLogin.style.display = 'flex';
+        if (appPrincipal) appPrincipal.style.display = 'none';
+
+        usuarioAtual = null;
+        localStorage.clear();
+    };
+
     document.getElementById('btn-entrar').addEventListener('click', () => signInWithPopup(auth, provider));
     
-    document.getElementById('btn-sair').addEventListener('click', () => {
-        signOut(auth).then(() => {
-            // Limpa dados locais e força retorno imediato à tela de login
-            localStorage.clear();
-            usuarioAtual = null;
-        });
+    document.getElementById('btn-sair').addEventListener('click', async () => {
+        mostrarTelaLogin();
+
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Erro ao sair:', error);
+        }
     });
 
-    // Clicar na logo leva de volta para a tela principal de água
     const logoHome = document.getElementById('logo-home');
     if (logoHome) {
-        logoHome.addEventListener('click', () => {
-            carregarTela('agua');
+        logoHome.addEventListener('click', async () => {
+            mostrarTelaLogin();
+
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error('Erro ao sair ao clicar na logo:', error);
+            }
         });
     }
 
