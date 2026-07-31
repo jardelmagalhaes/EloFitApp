@@ -1,8 +1,8 @@
 /* ==========================================================================
-   MÓDULO 1: IMPORTAÇÕES E CONFIGURAÇÃO DO FIREBASE
+   MÓDULO 1: IMPORTAÇÕES, CONFIGURAÇÃO E ESTADO LOCAL
    ========================================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -15,19 +15,51 @@ const firebaseConfig = {
   measurementId: "G-SLVDSWWZH9"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+let app = null;
+let auth = null;
+let db = null;
+let googleProvider = null;
+let usuarioAtual = null;
+
+function inicializarFirebaseSeDisponivel() {
+    if (app) return true;
+
+    try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        googleProvider = new GoogleAuthProvider();
+        googleProvider.setCustomParameters({ prompt: 'select_account' });
+        return true;
+    } catch (error) {
+        console.warn('Firebase não disponível para login do Google:', error);
+        return false;
+    }
+}
 
 async function autenticarGoogle() {
-    if (location.protocol === 'file:') {
-        alert('Para usar o login com o Google, abra o app em um servidor local, por exemplo: http://localhost:8000');
+    if (!inicializarFirebaseSeDisponivel()) {
+        alert('O login com Google não está disponível no momento. Você pode entrar sem login e usar o app normalmente.');
         return;
     }
 
     try {
-        await signInWithPopup(auth, provider);
+        const resultado = await signInWithPopup(auth, googleProvider);
+        usuarioAtual = resultado.user.uid;
+        const telaLogin = document.getElementById('tela-login');
+        const appPrincipal = document.getElementById('app-principal');
+        if (telaLogin) telaLogin.style.display = 'none';
+        if (appPrincipal) appPrincipal.style.display = 'block';
+
+        const refDoc = doc(db, 'usuarios', usuarioAtual);
+        const snapshot = await getDoc(refDoc);
+        if (snapshot.exists()) {
+            verificarRegraDeNegocio(snapshot.data());
+        } else {
+            verificarRegraDeNegocio(null);
+        }
+        atualizarInterfaceAgua();
+        carregarTela('agua');
     } catch (error) {
         const popupBloqueado = [
             'auth/popup-blocked',
@@ -36,9 +68,8 @@ async function autenticarGoogle() {
         ].includes(error?.code) || (error?.message || '').toLowerCase().includes('popup');
 
         if (popupBloqueado) {
-            console.warn('Popup bloqueado; usando redirecionamento do Google.');
             try {
-                await signInWithRedirect(auth, provider);
+                await signInWithRedirect(auth, googleProvider);
                 return;
             } catch (redirectError) {
                 console.error('Erro no redirect do Google:', redirectError);
@@ -46,11 +77,10 @@ async function autenticarGoogle() {
         }
 
         console.error('Erro ao autenticar com Google:', error);
-        alert('Não foi possível entrar com o Google. Verifique se o app está sendo aberto em http://localhost ou em um domínio HTTPS válido.');
+        alert('Não foi possível entrar com o Google, mas você pode continuar sem login.');
+        entrarNoApp();
     }
 }
-
-let usuarioAtual = null;
 
 // Estados de Água
 let totalAguaGlobal = 0;
@@ -339,11 +369,11 @@ function salvarEstadoAtual() {
     localStorage.setItem('elofit_dias_semana', JSON.stringify(diasSemanaConcluidos));
     localStorage.setItem('elofit_fichas_treino', JSON.stringify(minhasFichasTreino));
 
-    if (usuarioAtual) {
-        const refDoc = doc(db, "usuarios", usuarioAtual);
-        setDoc(refDoc, { 
+    if (usuarioAtual && usuarioAtual !== 'dispositivo_local' && db) {
+        const refDoc = doc(db, 'usuarios', usuarioAtual);
+        setDoc(refDoc, {
             dataRegistro: dataHoje,
-            agua: totalAguaGlobal, 
+            agua: totalAguaGlobal,
             tamanhoGarrafa: tamanhoGarrafaGlobal,
             metaDiaria: metaDiariaGlobal,
             historico: historicoAdicoes,
@@ -589,45 +619,22 @@ function carregarTela(tela) {
     }
 }
 
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({
-    prompt: 'select_account' // Força o Google a exibir a escolha de contas
-});
-
 /* ==========================================================================
-   MÓDULO 3: AUTENTICAÇÃO E EVENTOS GLOBAIS
+   MÓDULO 3: EVENTOS GLOBAIS E ACESSO LOCAL
    ========================================================================== */
-onAuthStateChanged(auth, (user) => {
+
+function entrarNoApp() {
     const telaLogin = document.getElementById('tela-login');
     const appPrincipal = document.getElementById('app-principal');
-    
-    if (user) {
-        usuarioAtual = user.uid;
-        telaLogin.style.display = 'none';
-        appPrincipal.style.display = 'block';
-        
-        const refDoc = doc(db, "usuarios", usuarioAtual);
-        getDoc(refDoc).then((snapshot) => {
-            if (snapshot.exists()) {
-                verificarRegraDeNegocio(snapshot.data());
-            } else {
-                verificarRegraDeNegocio(null);
-            }
-            atualizarInterfaceAgua();
-        }).catch(() => {
-            verificarRegraDeNegocio(null);
-            atualizarInterfaceAgua();
-        });
 
-        carregarTela('agua');
-    } else {
-        usuarioAtual = null;
-        if (intervaloNotificacao) clearInterval(intervaloNotificacao);
-        localStorage.clear();
-        telaLogin.style.display = 'flex';
-        appPrincipal.style.display = 'none';
-    }
-});
+    if (telaLogin) telaLogin.style.display = 'none';
+    if (appPrincipal) appPrincipal.style.display = 'block';
+
+    usuarioAtual = 'dispositivo_local';
+    verificarRegraDeNegocio(null);
+    atualizarInterfaceAgua();
+    carregarTela('agua');
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const mostrarTelaLogin = () => {
@@ -638,34 +645,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appPrincipal) appPrincipal.style.display = 'none';
 
         usuarioAtual = null;
-        localStorage.clear();
+        if (intervaloNotificacao) clearInterval(intervaloNotificacao);
+        carregarTela('agua');
     };
 
-    document.getElementById('btn-entrar').addEventListener('click', autenticarGoogle);
+    document.getElementById('btn-entrar').addEventListener('click', entrarNoApp);
+    document.getElementById('btn-entrar-google').addEventListener('click', autenticarGoogle);
     
-    document.getElementById('btn-sair').addEventListener('click', async () => {
+    document.getElementById('btn-sair').addEventListener('click', () => {
         mostrarTelaLogin();
-
-        try {
-            await signOut(auth);
-        } catch (error) {
-            console.error('Erro ao sair:', error);
-        }
     });
 
     const logoHome = document.getElementById('logo-home');
     if (logoHome) {
-        logoHome.addEventListener('click', async () => {
+        logoHome.addEventListener('click', () => {
             mostrarTelaLogin();
-
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error('Erro ao sair ao clicar na logo:', error);
-            }
         });
     }
 
     document.getElementById('btn-agua').addEventListener('click', () => carregarTela('agua'));
     document.getElementById('btn-treino').addEventListener('click', () => carregarTela('treino'));
+
+    mostrarTelaLogin();
 });
