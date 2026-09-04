@@ -9,6 +9,7 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 let corridaAtiva = false;
 let segundosCorrida = 0;
 let timerIntervalo = null;
+let inicioCorrida = null;
 
 function formatarTempo(segundosTotal) {
     const hrs = Math.floor(segundosTotal / 3600).toString().padStart(2, '0');
@@ -19,10 +20,9 @@ function formatarTempo(segundosTotal) {
 
 function calcularPace(segundosTotal, km) {
     if (!km || km <= 0 || segundosTotal <= 0) return "0'00\"";
-    const totalMinutos = segundosTotal / 60;
-    const minutosPorKm = totalMinutos / km;
-    const mins = Math.floor(minutosPorKm);
-    const secs = Math.round((minutosPorKm - mins) * 60).toString().padStart(2, '0');
+    const totalSegundosPorKm = Math.round(segundosTotal / km);
+    const mins = Math.floor(totalSegundosPorKm / 60);
+    const secs = (totalSegundosPorKm % 60).toString().padStart(2, '0');
     return `${mins}'${secs}"`;
 }
 const firebaseConfig = {
@@ -174,7 +174,6 @@ const templateAgua = `
     <div class="card" style="text-align: center; background: linear-gradient(135deg, #fff 0%, #fff7f0 100%); border: 2px solid #ff7b0033;">
         <div style="display: flex; justify-content: space-between; align-items: center; background: #fff3e0; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.6rem;">🔥</span>
                 <strong id="contador-ofensiva" style="color: #e65100; font-size: 1.1rem;">0 dias</strong>
             </div>
             <img src="img/mascote.png" alt="Mascote EloFit" style="width: 50px; height: 50px; object-fit: contain;">
@@ -214,8 +213,8 @@ const templateAgua = `
         </div>
 
         <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #555;">
-            <span>🏆 Metas cumpridas: <strong id="total-dias-concluidos" style="color: #333;">0 dias</strong></span>
-            <button id="btn-notificacao" style="background: #f0f0f0; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🔔 Ativar Lembretes</button>
+            <span>Metas cumpridas: <strong id="total-dias-concluidos" style="color: #333;">0 dias</strong></span>
+            <button id="btn-notificacao" style="background: #f0f0f0; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Ativar lembretes</button>
         </div>
     </div>
 `;
@@ -236,7 +235,7 @@ const templateTreino = `
         <div id="painel-ficha-ativa" style="display: none; border-top: 1px solid #eee; padding-top: 15px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h3 id="titulo-ficha-ativa" style="font-size: 1.05rem; color: #333; margin: 0;"></h3>
-                <button id="btn-apagar-treino-todo" style="background: #ea4335; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold;">🗑️ Apagar Treino Inteiro</button>
+                <button id="btn-apagar-treino-todo" style="background: #ea4335; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold;">Apagar treino inteiro</button>
             </div>
 
             <div style="display: flex; gap: 8px; margin-bottom: 15px;">
@@ -252,7 +251,7 @@ const templateTreino = `
 
 const templateCorrida = `
     <div class="card" style="background: #fff; border: 1px solid #ddd; text-align: center;">
-        <h2>Monitor de Corrida 🏃‍♂️</h2>
+        <h2>Monitor de Corrida</h2>
         <p style="color: #666; font-size: 0.85rem; margin-bottom: 20px;">Acompanhe o seu tempo, distância e calcule o seu pace em tempo real.</p>
         
         <div style="background: #f8fafc; padding: 25px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
@@ -308,7 +307,7 @@ function atualizarInterfaceAgua() {
             <div style="display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; flex: 1;">
                 <span style="color: #666; margin-bottom: 3px; font-weight: bold;">${dia.nome}</span>
                 <div style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: ${dia.concluido ? '#ff7b00' : '#e0e0e0'}; color: white; font-size: 0.9rem;">
-                    ${dia.concluido ? '🔥' : '·'}
+                    ${dia.concluido ? 'OK' : '·'}
                 </div>
             </div>
         `).join('');
@@ -373,7 +372,7 @@ function atualizarInterfaceTreino() {
                                     ${ex.texto}
                                 </span>
                             </div>
-                            <button class="btn-apagar-ex" data-index="${index}" style="background: transparent; border: none; color: #ea4335; cursor: pointer; font-size: 1rem; padding: 4px 8px;" title="Apagar exercício">🗑️</button>
+                            <button class="btn-apagar-ex" data-index="${index}" style="background: transparent; border: none; color: #ea4335; cursor: pointer; font-size: 0.8rem; padding: 4px 8px;" title="Apagar exercício">Apagar</button>
                         </div>
                     `;
                 }).join('');
@@ -531,18 +530,18 @@ function configurarNotificacoes() {
     }
 
     if (Notification.permission === "granted") {
-        btnNotif.innerText = "🔔 Lembretes Ativos";
+        btnNotif.innerText = "Lembretes ativos";
     }
 
     btnNotif.onclick = async () => {
         const permissao = await Notification.requestPermission();
         if (permissao === "granted") {
-            btnNotif.innerText = "🔔 Lembretes Ativos";
-            new Notification("EloFit 💧", { body: "Lembrete: Mantenha a disciplina e hidrate-se agora!" });
+            btnNotif.innerText = "Lembretes ativos";
+            new Notification("EloFit", { body: "Lembrete: mantenha a disciplina e hidrate-se agora." });
             
             if (intervaloNotificacao) clearInterval(intervaloNotificacao);
             intervaloNotificacao = setInterval(() => {
-                new Notification("EloFit 💧", { body: "Hora de beber um copo de água e manter a ofensiva em dia!" });
+                new Notification("EloFit", { body: "Hora de beber água e manter a ofensiva em dia." });
             }, 3600000);
         } else {
             alert("Permissão de notificação negada pelo navegador.");
@@ -551,6 +550,14 @@ function configurarNotificacoes() {
 }
 
 function carregarTela(tela) {
+    if (tela !== 'corrida' && (corridaAtiva || timerIntervalo)) {
+        clearInterval(timerIntervalo);
+        timerIntervalo = null;
+        corridaAtiva = false;
+        segundosCorrida = 0;
+        inicioCorrida = null;
+    }
+
     if (tela === 'agua') {
         conteudoPrincipal.innerHTML = templateAgua;
 
@@ -680,12 +687,13 @@ function carregarTela(tela) {
         btnIniciar.onclick = () => {
             if (!corridaAtiva) {
                 corridaAtiva = true;
+                inicioCorrida = Date.now() - (segundosCorrida * 1000);
                 btnIniciar.style.display = 'none';
                 btnParar.style.display = 'block';
                 inputDistancia.disabled = true;
 
                 timerIntervalo = setInterval(() => {
-                    segundosCorrida++;
+                    segundosCorrida = Math.floor((Date.now() - inicioCorrida) / 1000);
                     displayTempo.innerText = formatarTempo(segundosCorrida);
                     atualizarPaceTela();
                 }, 1000);
@@ -694,7 +702,9 @@ function carregarTela(tela) {
 
         btnParar.onclick = () => {
             clearInterval(timerIntervalo);
+            timerIntervalo = null;
             corridaAtiva = false;
+            inicioCorrida = null;
             alert(`Corrida finalizada! Tempo total: ${formatarTempo(segundosCorrida)}`);
             segundosCorrida = 0;
             displayTempo.innerText = "00:00:00";

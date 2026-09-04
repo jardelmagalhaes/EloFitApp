@@ -1,4 +1,4 @@
-const CACHE_NAME = 'elofit-cache-v2';
+const CACHE_NAME = 'elofit-cache-v6';
 const urlsToCache = [
   './',
   './index.html',
@@ -38,18 +38,16 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.startsWith('chrome-extension://')) return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
+    fetch(event.request).then((networkResponse) => {
+      if (networkResponse.ok || networkResponse.type === 'opaque') {
         const responseClone = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseClone);
         });
-        return networkResponse;
-      }).catch(() => caches.match('./index.html'));
-    })
+      }
+      return networkResponse;
+    }).catch(() => caches.match(event.request).then((cachedResponse) => {
+      return cachedResponse || caches.match('./index.html');
+    }))
   );
 });

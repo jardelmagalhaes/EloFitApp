@@ -249,6 +249,225 @@ input[type="number"]:focus, input[type="text"]:focus {
     }
 }
 
+/* ==========================================================================\n+   EXPERIENCIA MOBILE - PAINEL DE SAUDE\n+   ========================================================================== */
+#app-principal {
+    background: #000000;
+    color: #f5f5f7;
+}
+
+#tela-login {
+    background: #000000 !important;
+}
+
+#tela-login .login-card {
+    background: #151517 !important;
+    border: 1px solid #29292d !important;
+    box-shadow: none !important;
+    color: #f5f5f7;
+}
+
+#tela-login .login-card h1 {
+    color: #ffffff !important;
+}
+
+#tela-login .login-card p {
+    color: #a8a8ae !important;
+}
+
+#tela-login #btn-entrar {
+    background: #1e9bff !important;
+    color: #00111d !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+#tela-login #btn-entrar-google {
+    background: #202023 !important;
+    color: #f5f5f7 !important;
+    border: 1px solid #3a3a40 !important;
+    box-shadow: none !important;
+}
+
+#app-principal header {
+    background: #000000 !important;
+    border-bottom-color: #242426;
+    box-shadow: none !important;
+}
+
+#app-principal #logo-home img {
+    height: 34px !important;
+}
+
+#app-principal nav button {
+    color: #b7b7bd !important;
+}
+
+#app-principal nav button:hover,
+#app-principal nav button:focus-visible {
+    background: #202023 !important;
+    color: #ffffff !important;
+}
+
+#app-principal #btn-sair {
+    background: #241b1d !important;
+    border-color: #4a292d !important;
+    color: #ff8b92 !important;
+}
+
+#app-principal main#conteudo-principal {
+    background: #000000;
+    max-width: 760px;
+    padding-top: 22px !important;
+}
+
+#app-principal .card {
+    max-width: 100%;
+    background: #151517 !important;
+    border: 1px solid #242426 !important;
+    border-radius: 20px !important;
+    box-shadow: none !important;
+    color: #f5f5f7;
+}
+
+#app-principal #conteudo-principal .card:first-child {
+    background: #151517 !important;
+    border-color: #242426 !important;
+}
+
+#app-principal .card h2 {
+    color: #f5f5f7 !important;
+    font-size: 1.2rem !important;
+}
+
+#app-principal .card h3,
+#app-principal .card strong,
+#app-principal .card p {
+    color: #f5f5f7 !important;
+}
+
+#app-principal .card > p,
+#app-principal .card label,
+#app-principal .card span {
+    color: #a8a8ae !important;
+}
+
+#app-principal .card input[type="number"],
+#app-principal .card input[type="text"] {
+    background: #202023 !important;
+    border-color: #303035 !important;
+    color: #ffffff !important;
+}
+
+#app-principal .card input:focus {
+    border-color: #1e9bff !important;
+    box-shadow: 0 0 0 3px rgba(30, 155, 255, 0.18) !important;
+}
+
+#app-principal .btn-acao {
+    background: #1e9bff !important;
+    color: #00111d !important;
+    box-shadow: none !important;
+}
+
+#app-principal .btn-atalho {
+    background: #182a35 !important;
+    border-color: #20536d !important;
+    color: #66c5ff !important;
+}
+
+#app-principal #conteudo-principal .card:first-child > div[style*="background"] {
+    background: #1a1a1c !important;
+    border-color: #29292d !important;
+}
+
+#app-principal .card:first-child > div[style*="background"] strong {
+    color: #ffffff !important;
+}
+
+#app-principal #container-dias-semana {
+    background: #1a1a1c !important;
+    border-color: #29292d !important;
+}
+
+#app-principal #container-dias-semana > div > div {
+    background: #3a3a3f !important;
+}
+
+#app-principal #total-bebido,
+#app-principal #pace-display {
+    color: #1e9bff !important;
+}
+
+#app-principal #barra-progresso {
+    background: #1e9bff !important;
+}
+
+#app-principal #btn-notificacao {
+    background: #202023 !important;
+    border-color: #36363b !important;
+    color: #d7d7dc !important;
+}
+
+#app-principal #conteudo-principal [id="cronometro-display"] {
+    color: #ffffff !important;
+}
+
+#app-principal #conteudo-principal [id="cronometro-display"] + div,
+#app-principal #conteudo-principal [style*="background: #f8fafc"] {
+    background: #1a1a1c !important;
+    border-color: #29292d !important;
+}
+
+#app-principal #lista-exercicios > div {
+    background: #202023 !important;
+    border-color: #34343a !important;
+}
+
+#app-principal #lista-exercicios > div span {
+    color: #eeeeF2 !important;
+}
+
+#app-principal #painel-ficha-ativa {
+    border-top-color: #34343a !important;
+}
+
+#app-principal .btn-grupo-custom {
+    background: #202023 !important;
+    color: #f5f5f7 !important;
+    border: 1px solid #34343a !important;
+}
+
+#app-principal .btn-grupo-custom[style*="#4285F4"] {
+    background: #1e9bff !important;
+    border-color: #1e9bff !important;
+    color: #00111d !important;
+}
+
+@media (max-width: 600px) {
+    #app-principal header {
+        min-height: 64px;
+        padding: 10px 14px !important;
+    }
+
+    #app-principal nav {
+        gap: 2px !important;
+    }
+
+    #app-principal nav button {
+        padding: 8px 9px !important;
+        font-size: 0.78rem !important;
+    }
+
+    #app-principal main#conteudo-principal {
+        padding: 16px 10px 28px !important;
+    }
+
+    #app-principal .card {
+        border-radius: 18px !important;
+        padding: 18px 14px !important;
+    }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -257,4 +476,184 @@ input[type="number"]:focus, input[type="text"]:focus {
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================\n+   IDENTIDADE ELOFIT - SAUDE DIGITAL\n+   ========================================================================== */
+:root {
+    --primary: #1769e0;
+    --primary-hover: #0d55c7;
+    --bg-app: #f3f7fb;
+    --card-bg: #ffffff;
+    --text-main: #172033;
+    --text-muted: #697386;
+    --border-color: #e5eaf1;
+    --radius-card: 20px;
+    --radius-btn: 12px;
+    --shadow-soft: 0 8px 24px rgba(32, 56, 85, 0.08);
+    --success: #19a974;
+    --accent-cyan: #dff5fb;
+}
+
+body {
+    background: var(--bg-app);
+    color: var(--text-main);
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+#tela-login {
+    background: linear-gradient(145deg, #edf6ff 0%, #f5fbfc 52%, #eef8f4 100%);
+}
+
+.login-card {
+    border: 0;
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(34, 65, 100, 0.14);
+}
+
+.login-card h1 {
+    color: var(--text-main);
+}
+
+#app-principal {
+    min-height: 100vh;
+}
+
+header {
+    min-height: 72px;
+    padding: 12px clamp(16px, 4vw, 56px) !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 3px 16px rgba(35, 55, 80, 0.05) !important;
+}
+
+#logo-home {
+    padding: 4px 10px !important;
+}
+
+#logo-home img {
+    height: 42px !important;
+}
+
+nav {
+    gap: 6px !important;
+}
+
+nav button {
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 10px 14px !important;
+    background: transparent !important;
+    color: var(--text-muted) !important;
+    font-size: 0.84rem !important;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+nav button:hover,
+nav button:focus-visible {
+    background: #edf4ff !important;
+    color: var(--primary) !important;
+    transform: translateY(-1px);
+}
+
+#btn-sair {
+    background: #fff0f0 !important;
+    color: #d94a4a !important;
+    border: 1px solid #ffd9d9 !important;
+}
+
+#btn-sair:hover {
+    background: #ffe3e3 !important;
+    color: #b83333 !important;
+}
+
+main#conteudo-principal {
+    width: min(100%, 1040px);
+    margin: 0 auto;
+    padding: clamp(24px, 5vw, 52px) 18px !important;
+}
+
+.card {
+    max-width: 680px;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-card) !important;
+    box-shadow: var(--shadow-soft) !important;
+    padding: clamp(22px, 4vw, 34px) !important;
+}
+
+.card h2 {
+    color: var(--text-main) !important;
+    font-size: clamp(1.3rem, 3vw, 1.65rem) !important;
+    letter-spacing: -0.02em;
+}
+
+.card > p {
+    color: var(--text-muted) !important;
+    line-height: 1.5;
+}
+
+.card input[type="number"],
+.card input[type="text"] {
+    min-height: 44px;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    background: #f8fafc !important;
+    color: var(--text-main) !important;
+}
+
+.card input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(23, 105, 224, 0.12) !important;
+}
+
+.btn-acao {
+    min-height: 44px;
+    border-radius: 12px !important;
+    background: var(--primary) !important;
+    box-shadow: 0 8px 16px rgba(23, 105, 224, 0.18) !important;
+}
+
+.btn-acao:hover {
+    background: var(--primary-hover) !important;
+}
+
+#conteudo-principal .card:first-child {
+    background: #ffffff !important;
+}
+
+#conteudo-principal .card:first-child > div[style*="background"] {
+    background: linear-gradient(135deg, #eef6ff, #f0fbf8) !important;
+    border: 1px solid #e1edf7;
+}
+
+#conteudo-principal .card:first-child > div[style*="background"] strong {
+    color: var(--success) !important;
+}
+
+#conteudo-principal [id="cronometro-display"] {
+    color: var(--text-main) !important;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+}
+
+#conteudo-principal [id="pace-display"] {
+    color: var(--primary) !important;
+}
+
+@media (max-width: 600px) {
+    header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    nav {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
+    nav button {
+        flex: 0 0 auto;
+        padding: 8px 11px !important;
+    }
 }
