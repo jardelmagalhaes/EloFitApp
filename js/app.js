@@ -6,6 +6,25 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+let corridaAtiva = false;
+let segundosCorrida = 0;
+let timerIntervalo = null;
+
+function formatarTempo(segundosTotal) {
+    const hrs = Math.floor(segundosTotal / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((segundosTotal % 3600) / 60).toString().padStart(2, '0');
+    const secs = (segundosTotal % 60).toString().padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
+}
+
+function calcularPace(segundosTotal, km) {
+    if (!km || km <= 0 || segundosTotal <= 0) return "0'00\"";
+    const totalMinutos = segundosTotal / 60;
+    const minutosPorKm = totalMinutos / km;
+    const mins = Math.floor(minutosPorKm);
+    const secs = Math.round((minutosPorKm - mins) * 60).toString().padStart(2, '0');
+    return `${mins}'${secs}"`;
+}
 const firebaseConfig = {
   apiKey: "AIzaSyB4lEEEAF754mDnXGdttZ7k1kU8h0sxM8Q",
   authDomain: "checkvital-999fa.firebaseapp.com",
@@ -227,6 +246,33 @@ const templateTreino = `
 
             <div id="lista-exercicios" style="display: flex; flex-direction: column; gap: 10px;">
                 </div>
+        </div>
+    </div>
+`;
+
+const templateCorrida = `
+    <div class="card" style="background: #fff; border: 1px solid #ddd; text-align: center;">
+        <h2>Monitor de Corrida 🏃‍♂️</h2>
+        <p style="color: #666; font-size: 0.85rem; margin-bottom: 20px;">Acompanhe o seu tempo, distância e calcule o seu pace em tempo real.</p>
+        
+        <div style="background: #f8fafc; padding: 25px; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <div id="cronometro-display" style="font-size: 2.8rem; font-weight: 800; color: #1e293b; margin-bottom: 10px;">00:00:00</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <div>
+                    <span style="font-size: 0.8rem; color: #64748b; display: block;">Distância (km)</span>
+                    <input type="number" id="input-distancia-corrida" value="1.0" step="0.1" style="text-align: center; font-size: 1.1rem; font-weight: bold; margin-top: 4px;" />
+                </div>
+                <div>
+                    <span style="font-size: 0.8rem; color: #64748b; display: block;">Pace Médio</span>
+                    <strong id="pace-display" style="font-size: 1.3rem; color: #0284c7; display: block; margin-top: 8px;">0'00" /km</strong>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button id="btn-iniciar-corrida" class="btn-acao" style="flex: 1; background: #10b981;">Iniciar Corrida</button>
+            <button id="btn-parar-corrida" style="flex: 1; background: #ef4444; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: none;">Finalizar</button>
         </div>
     </div>
 `;
@@ -507,8 +553,7 @@ function configurarNotificacoes() {
 function carregarTela(tela) {
     if (tela === 'agua') {
         conteudoPrincipal.innerHTML = templateAgua;
-        
-        verificarRegraDeNegocio(null);
+
         atualizarInterfaceAgua();
         configurarNotificacoes();
 
@@ -616,6 +661,48 @@ function carregarTela(tela) {
                 }
             };
         }
+    } else if (tela === 'corrida') {
+        conteudoPrincipal.innerHTML = templateCorrida;
+
+        const btnIniciar = document.getElementById('btn-iniciar-corrida');
+        const btnParar = document.getElementById('btn-parar-corrida');
+        const displayTempo = document.getElementById('cronometro-display');
+        const displayPace = document.getElementById('pace-display');
+        const inputDistancia = document.getElementById('input-distancia-corrida');
+
+        function atualizarPaceTela() {
+            const km = parseFloat(inputDistancia.value) || 0;
+            displayPace.innerText = `${calcularPace(segundosCorrida, km)} /km`;
+        }
+
+        inputDistancia.oninput = atualizarPaceTela;
+
+        btnIniciar.onclick = () => {
+            if (!corridaAtiva) {
+                corridaAtiva = true;
+                btnIniciar.style.display = 'none';
+                btnParar.style.display = 'block';
+                inputDistancia.disabled = true;
+
+                timerIntervalo = setInterval(() => {
+                    segundosCorrida++;
+                    displayTempo.innerText = formatarTempo(segundosCorrida);
+                    atualizarPaceTela();
+                }, 1000);
+            }
+        };
+
+        btnParar.onclick = () => {
+            clearInterval(timerIntervalo);
+            corridaAtiva = false;
+            alert(`Corrida finalizada! Tempo total: ${formatarTempo(segundosCorrida)}`);
+            segundosCorrida = 0;
+            displayTempo.innerText = "00:00:00";
+            btnParar.style.display = 'none';
+            btnIniciar.style.display = 'block';
+            inputDistancia.disabled = false;
+            atualizarPaceTela();
+        };
     }
 }
 
@@ -646,6 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         usuarioAtual = null;
         if (intervaloNotificacao) clearInterval(intervaloNotificacao);
+        verificarRegraDeNegocio(null);
         carregarTela('agua');
     };
 
@@ -665,6 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-agua').addEventListener('click', () => carregarTela('agua'));
     document.getElementById('btn-treino').addEventListener('click', () => carregarTela('treino'));
+    document.getElementById('btn-corrida').addEventListener('click', () => carregarTela('corrida'));
 
     mostrarTelaLogin();
 });
