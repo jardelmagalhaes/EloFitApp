@@ -1,4 +1,4 @@
-const CACHE_NAME = 'elofit-cache-v6';
+const CACHE_NAME = 'elofit-cache-v7';
 const urlsToCache = [
   './',
   './index.html',
